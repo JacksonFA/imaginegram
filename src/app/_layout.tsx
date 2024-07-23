@@ -7,6 +7,8 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
 } from '@expo-google-fonts/inter'
+import { StatusBar, View } from 'react-native'
+import { Loading } from '@/components/loading'
 
 export default function Layout() {
   const [fontsLoaded] = useFonts({
@@ -16,8 +18,17 @@ export default function Layout() {
   })
 
   if (!fontsLoaded) {
-    return null
+    return <Loading />
   }
 
-  return <Slot />
+  return (
+    <View className="flex-1 bg-zinc-100">
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
+      <Slot />
+    </View>
+  )
 }
