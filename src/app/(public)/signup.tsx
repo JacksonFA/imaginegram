@@ -61,28 +61,24 @@ export default function SignUp() {
 
   async function onEmailSignUp() {
     if (!isLoaded) return
+    setIsLoading(true)
 
     if (!emailAddress || !password) {
       Alert.alert(
         'Criar conta',
         'Preencha todos os campos',
       )
+      setIsLoading(false)
       return
     }
-
-    console.log(
-      emailAddress
-        .split('@')[0]
-        .replace(/[^a-zA-Z0-9]/g, ''),
-    )
 
     try {
       await signUp.create({
         emailAddress,
         password,
-        // username: emailAddress
-        //   .split('@')[0]
-        //   .replace(/[^a-zA-Z0-9]/g, ''),
+        username: emailAddress
+          .split('@')[0]
+          .replace(/[^a-zA-Z0-9]/g, ''),
       })
 
       await signUp.prepareEmailAddressVerification(
@@ -90,6 +86,7 @@ export default function SignUp() {
       )
 
       setIsPendingVerification(true)
+      setIsLoading(false)
     } catch (error) {
       const errorToJSON = JSON.parse(
         JSON.stringify(error, null, 2),
@@ -98,10 +95,40 @@ export default function SignUp() {
         console.log(errorToJSON)
       }
       console.error(error)
+      setIsLoading(false)
     }
   }
 
-  async function onEmailVerify() {}
+  async function onEmailVerify() {
+    if (!isLoaded) return
+    setIsLoading(true)
+
+    try {
+      const completeSignUp =
+        await signUp.attemptEmailAddressVerification(
+          { code },
+        )
+
+      if (completeSignUp.status === 'complete') {
+        await setActive({
+          session:
+            completeSignUp.createdSessionId,
+        })
+        setIsLoading(false)
+        router.replace('(auth)')
+      } else {
+        console.error(
+          JSON.stringify(completeSignUp, null, 2),
+        )
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error(
+        JSON.stringify(error, null, 2),
+      )
+      setIsLoading(false)
+    }
+  }
 
   return (
     <>
@@ -189,6 +216,7 @@ export default function SignUp() {
 
                 <Button
                   variant="secondary"
+                  disabled={isLoading}
                   onPress={onEmailSignUp}>
                   <Button.Title>
                     Criar conta
@@ -204,7 +232,9 @@ export default function SignUp() {
           <View className="w-full py-6 bg-zinc-200/30">
             <TouchableOpacity
               className="flex-row items-center justify-center gap-4"
-              onPress={() => router.push('/')}>
+              onPress={() =>
+                router.push('(public)')
+              }>
               <Text className="text-zinc-500">
                 Já possui uma conta?
               </Text>

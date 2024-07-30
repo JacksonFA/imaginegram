@@ -9,7 +9,15 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { useSignIn } from '@clerk/clerk-expo'
+import {
+  coolDownAsync,
+  maybeCompleteAuthSession,
+  warmUpAsync,
+} from 'expo-web-browser'
+import {
+  useOAuth,
+  useSignIn,
+} from '@clerk/clerk-expo'
 import {
   AntDesign,
   Entypo,
@@ -18,9 +26,14 @@ import { Button } from '@/components/button'
 import { Show } from '@/components/show'
 import { Input } from '@/components/input'
 
+maybeCompleteAuthSession()
+
 export default function Index() {
   const { top } = useSafeAreaInsets()
   const router = useRouter()
+  const googleOAuth = useOAuth({
+    strategy: 'oauth_google',
+  })
   const { isLoaded, signIn, setActive } =
     useSignIn()
 
@@ -53,14 +66,18 @@ export default function Index() {
         () => setIsKeyboardVisible(false),
       )
 
+    warmUpAsync()
+
     return () => {
       keyboardDidHideListener.remove()
       keyboardDidShowListener.remove()
+      coolDownAsync()
     }
   }, [])
 
   async function onEmailSignIn() {
     if (!isLoaded) return
+    setIsLoading(true)
 
     try {
       const signInAttempt = await signIn.create({
@@ -72,15 +89,43 @@ export default function Index() {
         await setActive({
           session: signInAttempt.createdSessionId,
         })
+        setIsLoading(false)
       } else {
         console.error(
           JSON.stringify(signInAttempt, null, 2),
         )
+        setIsLoading(false)
       }
     } catch (error) {
       console.error(
         JSON.stringify(error, null, 2),
       )
+      setIsLoading(false)
+    }
+  }
+
+  async function onGoogleSignIn() {
+    try {
+      setIsLoading(true)
+
+      const oAuthFlow =
+        await googleOAuth.startOAuthFlow()
+
+      if (
+        oAuthFlow.authSessionResult?.type ===
+        'success'
+      ) {
+        if (oAuthFlow.setActive) {
+          await oAuthFlow.setActive({
+            session: oAuthFlow.createdSessionId,
+          })
+        }
+      } else setIsLoading(false)
+    } catch (error) {
+      console.error(
+        JSON.stringify(error, null, 2),
+      )
+      setIsLoading(false)
     }
   }
 
@@ -109,7 +154,10 @@ export default function Index() {
                 e reels de seus amigos.
               </Text>
 
-              <Button className="w-full mt-32">
+              <Button
+                className="w-full mt-32"
+                disabled={isLoading}
+                onPress={onGoogleSignIn}>
                 <AntDesign
                   name="google"
                   size={24}
@@ -177,6 +225,7 @@ export default function Index() {
 
                 <Button
                   variant="secondary"
+                  disabled={isLoading}
                   onPress={onEmailSignIn}>
                   <Button.Title>
                     Entrar
@@ -192,9 +241,8 @@ export default function Index() {
 
               <Button
                 className="w-full mt-12"
-                onPress={() =>
-                  setSigninType('social')
-                }>
+                disabled={isLoading}
+                onPress={onGoogleSignIn}>
                 <AntDesign
                   name="google"
                   size={24}
@@ -214,7 +262,7 @@ export default function Index() {
             <TouchableOpacity
               className="flex-row items-center justify-center gap-4"
               onPress={() =>
-                router.push('/signup')
+                router.push('(public)/signup')
               }>
               <Text className="text-zinc-500">
                 Não possui uma conta?

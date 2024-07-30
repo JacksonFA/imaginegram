@@ -1,26 +1,74 @@
+import {
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button } from '@/components/button'
-import { useAuth } from '@clerk/clerk-expo'
-import { router } from 'expo-router'
-import { Text, View } from 'react-native'
+import { Logo } from '@/components/logo'
+import { Nav } from '@/components/nav'
+import { Icon } from '@/components/icon'
+import { Stories } from '@/components/stories'
+import { Post } from '@/components/post'
 
 export default function Home() {
-  const { signOut } = useAuth()
+  const { top } = useSafeAreaInsets()
+  // const { signOut } = useAuth()
 
-  async function onSignOut() {
-    await signOut()
-    router.replace('(public)')
-  }
+  // async function onSignOut() {
+  //   await signOut()
+  //   router.replace('(public)')
+  // }
 
   return (
-    <View className="flex-1 px-8 items-center justify-center">
-      <Text className="text-zinc-600 text-3xl">
-        HOME!
-      </Text>
-      <Button
-        className="w-full"
-        onPress={onSignOut}>
-        <Button.Title>Sair</Button.Title>
-      </Button>
-    </View>
+    <>
+      <View
+        style={{ paddingTop: top }}
+        className="flex-1">
+        <View className="w-full h-16 flex-row items-center justify-between">
+          <Logo size="12" className="w-44" />
+
+          <View className="flex-row">
+            <TouchableOpacity>
+              <Icon>
+                <Icon.Oct
+                  name="diff-added"
+                  size={24}
+                />
+              </Icon>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Icon>
+                <Icon.Ant
+                  name="hearto"
+                  size={24}
+                />
+              </Icon>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Icon>
+                <Icon.MaterialCI
+                  name="facebook-messenger"
+                  size={24}
+                />
+              </Icon>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View>
+          <View className="h-28 border-b border-zinc-300">
+            <Stories />
+          </View>
+
+          <Post>
+            <Post.Header />
+          </Post>
+        </View>
+      </View>
+      <Nav currentPath="home" />
+    </>
   )
 }
