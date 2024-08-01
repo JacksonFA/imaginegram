@@ -1,4 +1,5 @@
 import {
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -10,6 +11,8 @@ import { Nav } from '@/components/nav'
 import { Icon } from '@/components/icon'
 import { Stories } from '@/components/stories'
 import { Post } from '@/components/post'
+import { Feed } from '@/components/feed'
+import { router } from 'expo-router'
 
 export default function Home() {
   const { top } = useSafeAreaInsets()
@@ -22,14 +25,19 @@ export default function Home() {
 
   return (
     <>
-      <View
-        style={{ paddingTop: top }}
+      <ScrollView
+        style={{
+          paddingTop: top,
+        }}
         className="flex-1">
         <View className="w-full h-16 flex-row items-center justify-between">
           <Logo size="12" className="w-44" />
 
           <View className="flex-row">
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                router.push('(auth)/story')
+              }>
               <Icon>
                 <Icon.Oct
                   name="diff-added"
@@ -63,11 +71,9 @@ export default function Home() {
             <Stories />
           </View>
 
-          <Post>
-            <Post.Header />
-          </Post>
+          <Feed />
         </View>
-      </View>
+      </ScrollView>
       <Nav currentPath="home" />
     </>
   )

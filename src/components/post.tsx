@@ -1,4 +1,5 @@
 import {
+  Image,
   Text,
   TouchableOpacity,
   View,
@@ -34,6 +35,93 @@ Post.Header = function Header() {
         </Icon>
       </TouchableOpacity>
     </View>
+  )
+}
+
+Post.Img = function Img() {
+  return (
+    <Image
+      className="w-full"
+      source={require('@/assets/post.png')}
+    />
+  )
+}
+
+Post.Actions = function Actions() {
+  return (
+    <View className="flex-row justify-between">
+      <View className="flex-row items-center">
+        <TouchableOpacity>
+          <Icon>
+            <Icon.Ant name="hearto" size={26} />
+          </Icon>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Icon>
+            <Icon.Feath
+              name="message-circle"
+              size={28}
+            />
+          </Icon>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Icon>
+            <Icon.Feath name="send" size={28} />
+          </Icon>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity>
+        <Icon>
+          <Icon.FA name="bookmark-o" size={26} />
+        </Icon>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+Post.Likes = function Likes() {
+  return (
+    <View className="flex-row px- items-center">
+      <Text>Liked by </Text>
+      <Text className="font-semibold">
+        username
+      </Text>
+      <Text> and </Text>
+      <Text className="font-semibold">
+        905,235
+      </Text>
+    </View>
+  )
+}
+
+Post.Comments = function Comments() {
+  return (
+    <View className="px-4 mt-2">
+      <Text className="flex-row">
+        <Text className="font-semibold">
+          Marvel{' '}
+        </Text>
+        Start your countdown to the glorious
+        arrival of Marvel Studios #Loki
+        <Text className="text-zinc-500">
+          ...more
+        </Text>
+      </Text>
+      <TouchableOpacity>
+        <Text className="text-zinc-500">
+          View all 103 comments
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+Post.AddComment = function AddComment() {
+  return (
+    <TouchableOpacity className="flex-row gap-2 p-2 items-center">
+      <View className="w-10 h-10 bg-zinc-600 rounded-full" />
+      <Text>add your comment...</Text>
+    </TouchableOpacity>
   )
 }
 

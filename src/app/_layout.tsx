@@ -86,7 +86,7 @@ export default function Layout() {
     <View className="flex-1 bg-zinc-100">
       <StatusBar
         barStyle="dark-content"
-        backgroundColor="transparent"
+        backgroundColor="#f4f4f5"
         translucent
       />
       <ClerkProvider

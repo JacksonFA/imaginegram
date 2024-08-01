@@ -2,6 +2,7 @@ import { View, ViewProps } from 'react-native'
 import {
   AntDesign,
   Entypo,
+  Feather,
   FontAwesome,
   MaterialCommunityIcons,
   Octicons,
@@ -53,6 +54,20 @@ Icon.FA = function FA({
 }: IconProps) {
   return (
     <FontAwesome
+      name={name}
+      size={size}
+      color={color}
+    />
+  )
+}
+
+Icon.Feath = function Feath({
+  name,
+  size = 36,
+  color = 'black',
+}: IconProps) {
+  return (
+    <Feather
       name={name}
       size={size}
       color={color}
